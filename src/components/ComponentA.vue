@@ -3,6 +3,7 @@
     class="component-a">
     Today’s date is {{$Day.today().strftime('%d %b, %Y')}}.<br>
     Today’s week ends on {{$Day.today().endOf('WEEK').strftime('%d %b, %Y')}}.<br>
+    The current month has {{$Day.current('MONTH').arrayOf('DAY').length}} days.<br>
   </div>
 </template>
 
