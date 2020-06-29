@@ -26,15 +26,34 @@
     <!-- <div class="app"></div> -->
 
     <div vue-component="A">
-      This div will be replace by “ComponentA”
+      This div will be replaced by “ComponentA”
     </div>
 
     <div vue-component="B">
-      This div will be replace by “ComponentB”
+      This div will be replaced by “ComponentB”
+    </div>
+	
+    <div vue-component="B">
+      This div will be replaced by “ComponentB”
+    </div>
+	
+    <div vue-component="C">
+      This div will be replaced by “ComponentC”
     </div>
 
-    <div vue-component="C">
-      This div will be replace by “ComponentC”
+    <div vue-component="Disabled">
+      This div refers to some non-inexistent component, and should be left as is.
+    </div>
+    
+    <div class="text-gray-900 antialiased leading-tight">
+        Testing some Tailwind styling...
+    </div>
+    
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Button
+    </button>
+    
+    <div vue-component="DatePicker">
     </div>
 
     <!-- built files will be auto injected -->
