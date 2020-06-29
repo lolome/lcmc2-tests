@@ -1,7 +1,8 @@
 <template>
   <div
     class="component-a">
-    Component A
+    Today’s date is {{$Day.today().strftime('%d %b, %Y')}}.<br>
+    Today’s week ends on {{$Day.today().endOf('WEEK').strftime('%d %b, %Y')}}.<br>
   </div>
 </template>
 
@@ -12,6 +13,7 @@
  *  component
  * - - - - - - - - - - - - - - - - - - - - -
  */
+
 export default {
   name: 'ConponentA',
   props: {

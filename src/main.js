@@ -3,7 +3,13 @@
  *  requireds
  * - - - - - - - - - - - - - - - - - - - - -
  */
+
+// Libraries
+import Day from '@/libs/day/day';
+
 import Vue from 'vue';
+// The below will integrate our day library to any Vue component.
+Object.defineProperty(Vue.prototype, '$Day', { value: Day });
 Vue.config.productionTip = false;
 
 /*
@@ -11,10 +17,12 @@ Vue.config.productionTip = false;
  *  components
  * - - - - - - - - - - - - - - - - - - - - -
  */
+
 const registeredComponents = {
   ComponentA: () => import('./components/ComponentA'),
   ComponentB: () => import('./components/ComponentB'),
-  ComponentC: () => import('./components/ComponentC')
+  ComponentC: () => import('./components/ComponentC'),
+  ComponentDatePicker: () => import('./components/DatePicker')
 };
 console.log(registeredComponents);
 
@@ -32,9 +40,12 @@ import './assets/styles/index.css';
  */
 const mountComponent = (element, componentName) => {
   const component = registeredComponents[componentName];
-  new Vue({
-    render: h => h(component)
-  }).$mount(element);
+  console.log('Component:', component);
+  if (component !== undefined) {
+    new Vue({
+      render: h => h(component)
+    }).$mount(element);
+  }
 };
 
 /*
