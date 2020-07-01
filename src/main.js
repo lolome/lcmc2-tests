@@ -24,7 +24,7 @@ const registeredComponents = {
   ComponentC: () => import('./components/ComponentC'),
   ComponentDatePicker: () => import('./components/DatePicker')
 };
-console.log(registeredComponents);
+// console.log(registeredComponents);
 
 /*
  * -----------------------------------------
@@ -40,7 +40,7 @@ import './assets/styles/index.css';
  */
 const mountComponent = (element, componentName) => {
   const component = registeredComponents[componentName];
-  console.log('Component:', component);
+  // console.log('Component:', component);
   if (component !== undefined) {
     new Vue({
       render: h => h(component)
