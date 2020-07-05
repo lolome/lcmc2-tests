@@ -19,6 +19,8 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
 
+    <%= require('html-loader!../src/assets/html/nav.html') %>
+
     <div>
       <h1>index</h1>
     </div>
@@ -32,11 +34,11 @@
     <div vue-component="B">
       This div will be replaced by “ComponentB”
     </div>
-	
+
     <div vue-component="B">
       This div will be replaced by “ComponentB”
     </div>
-	
+
     <div vue-component="C">
       This div will be replaced by “ComponentC”
     </div>
@@ -44,15 +46,15 @@
     <div vue-component="Disabled">
       This div refers to some non-inexistent component, and should be left as is.
     </div>
-    
+
     <div class="text-gray-900 antialiased leading-tight">
         Testing some Tailwind styling...
     </div>
-    
+
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
       Button
     </button>
-    
+
     <h1>Un exemple de DatePicker</h1>
     <div vue-component="DatePicker">
     </div>
