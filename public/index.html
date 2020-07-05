@@ -27,24 +27,27 @@
 
     <!-- <div class="app"></div> -->
 
-    <div vue-component="A">
+    <div vue-component="ComponentA">
       This div will be replaced by “ComponentA”
     </div>
 
-    <div vue-component="B">
+    <div vue-component="ComponentB">
       This div will be replaced by “ComponentB”
     </div>
 
-    <div vue-component="B">
+    <div vue-component="ComponentB">
       This div will be replaced by “ComponentB”
     </div>
 
-    <div vue-component="C">
+    <div vue-component="ComponentC">
       This div will be replaced by “ComponentC”
     </div>
 
+    <div>
+      <strike>The following div refers to some non-inexistent component, and should be left as is.</strike><br>
+      The following div refers to some non-inexistent component, and should display an error.
+    </div>
     <div vue-component="Disabled">
-      This div refers to some non-inexistent component, and should be left as is.
     </div>
 
     <div class="text-gray-900 antialiased leading-tight">

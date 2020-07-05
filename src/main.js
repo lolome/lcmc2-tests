@@ -19,10 +19,11 @@ Vue.config.productionTip = false;
  */
 
 const registeredComponents = {
+  ErrorComponent: () => import('./components/Error'),
   ComponentA: () => import('./components/ComponentA'),
   ComponentB: () => import('./components/ComponentB'),
   ComponentC: () => import('./components/ComponentC'),
-  ComponentDatePicker: () => import('./components/DatePicker')
+  DatePicker: () => import('./components/DatePicker')
 };
 // console.log(registeredComponents);
 
@@ -41,9 +42,19 @@ import './assets/styles/index.css';
 const mountComponent = (element, componentName) => {
   const component = registeredComponents[componentName];
   // console.log('Component:', component);
-  if (component !== undefined) {
+  if (typeof component !== 'undefined') {
     new Vue({
       render: h => h(component)
+    }).$mount(element);
+  } else {
+    new Vue({
+      render: h => h(
+        registeredComponents.ErrorComponent,
+        {
+          props: {
+            message: `Component “${componentName}” is undefined!`
+          }
+        })
     }).$mount(element);
   }
 };
@@ -60,8 +71,7 @@ window.addEventListener(event, eve => {
   const vueComponents = document.querySelectorAll('[vue-component]');
   // console.log(vueComponents);
   vueComponents.forEach(element => {
-    const vueComponentName = 'Component' +
-      element.getAttribute('vue-component');
+    const vueComponentName = element.getAttribute('vue-component');
     // console.log(vueComponentName);
     mountComponent(element, vueComponentName);
   });
