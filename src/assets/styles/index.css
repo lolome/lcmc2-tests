@@ -1,3 +1,131 @@
 @tailwind base;
+
+/*Example from Taiwind doc*/
+
+/* Proxima Nova Light */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_12_0.eot');
+	src:  url('fonts/proxima-nova/302824_12_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_12_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_12_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_12_0.ttf') format('truetype');
+	font-weight: 300;
+  font-style: normal;
+}
+
+/* Proxima Nova Light Italic */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_13_0.eot');
+	src:  url('fonts/proxima-nova/302824_13_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_13_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_13_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_13_0.ttf') format('truetype');
+	font-weight: 300;
+  font-style: italic;
+}
+
+/* Proxima Nova Regular */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_14_0.eot');
+	src:  url('fonts/proxima-nova/302824_14_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_14_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_14_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_14_0.ttf') format('truetype');
+	font-weight: 400;
+  font-style: normal;
+}
+
+/* Proxima Nova Regular Italic */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_15_0.eot');
+	src:  url('fonts/proxima-nova/302824_15_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_15_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_15_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_15_0.ttf') format('truetype');
+	font-weight: 400;
+  font-style: italic;;
+}
+
+/* Proxima Nova Semibold */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_16_0.eot');
+	src:  url('fonts/proxima-nova/302824_16_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_16_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_16_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_16_0.ttf') format('truetype');
+	font-weight: 600;
+  font-style: normal;
+}
+
+/* Proxima Nova SemiBold Italic */
+@font-face {
+	font-family: 'Proxima Nova';
+	src: url('fonts/proxima-nova/302824_17_0.eot');
+	src: url('fonts/proxima-nova/302824_17_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_17_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_17_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_17_0.ttf') format('truetype');
+	font-weight: 600;
+  font-style: italic;;
+}
+
+/* Proxima Nova Bold */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_11_0.eot');
+	src:  url('fonts/proxima-nova/302824_11_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_11_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_11_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_11_0.ttf') format('truetype');
+	font-weight: 700;
+  font-style: normal;
+}
+
+/* Proxima Nova ExtraBold */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_1A_0.eot');
+	src:  url('fonts/proxima-nova/302824_1A_0.eot?#iefix') format('embedded-opentype'),
+		url('fonts/proxima-nova/302824_1A_0.woff2') format('woff2'),
+		url('fonts/proxima-nova/302824_1A_0.woff') format('woff'),
+		url('fonts/proxima-nova/302824_1A_0.ttf') format('truetype');
+	font-weight: 800;
+  font-style: normal;
+}
+
+/* Proxima Nova Black */
+@font-face {
+	font-family: 'Proxima Nova';
+	src:  url('fonts/proxima-nova/302824_10_0.eot');
+	src:  url('fonts/proxima-nova/302824_10_0.eot?#iefix') format('embedded-opentype'),
+	 url('fonts/proxima-nova/302824_10_0.woff2') format('woff2'),
+	 url('fonts/proxima-nova/302824_10_0.woff') format('woff'),
+	 url('fonts/proxima-nova/302824_10_0.ttf') format('truetype');
+	font-weight: 900;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Proxima Nova';
+}
+
+h1 {
+  @apply text-2xl;
+}
+h2 {
+  @apply text-xl;
+}
+h3 {
+  @apply text-lg;
+}
+a {
+  @apply text-blue-600 underline;
+}
+
 @tailwind components;
 @tailwind utilities;

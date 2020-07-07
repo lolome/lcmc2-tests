@@ -5,6 +5,8 @@
     <label>
       <input placeholder="Enter code" v-on:change="setRangeFromText($event.target.value);">
       <button v-on:click="display='month'">ShowMonth</button>
+      <input type="hidden" id="period_start" name="period_start" v-bind:value="this.range.begin.tag">
+      <input type="hidden" id="period_end" name="period_end" v-bind:value="this.range.end.tag">
     </label>
 
     <div v-show="display=='month'" id="monthView" class="calendar month">
@@ -61,129 +63,129 @@
    </div>
   </div>
 </template>
-              
+
 <style>
- 	.summup {
- 		position:absolute;
- 		max-width: 12.8em;
- 		font-size: 28px;
- 		display: block;
- 		height: 36px;
- 		font-weight: bold;
- 		color: #f5730e;
- 		line-height: 40px;
- 	}
+  .summup {
+   position:absolute;
+   max-width: 12.8em;
+   font-size: 28px;
+   display: block;
+   height: 36px;
+   font-weight: bold;
+   color: #f5730e;
+   line-height: 40px;
+  }
 
- 	.summup:hover{
- 		visibility:hidden;
- 	}
+  .summup:hover{
+   visibility:hidden;
+  }
 
- 	.crit-field:hover{
- 		visibility:visible;
- 	}
+  .crit-field:hover{
+   visibility:visible;
+  }
 
- 	.calendar {
- 		border:1px solid gray;
- 		padding: 5px;
- 		max-width: 12.8em;
- 		height:14em;
- 		box-sizing:border-box;
- 	}
+  .calendar {
+   border:1px solid gray;
+   padding: 5px;
+   max-width: 12.8em;
+   height:14em;
+   box-sizing:border-box;
+  }
 
- 	.calendar nav {
- 		vertical-align:middle;
- 		display: flex;
- 		justify-content: space-between;
- 		margin-bottom:5%;
- 	}
+  .calendar nav {
+   vertical-align:middle;
+   display: flex;
+   justify-content: space-between;
+   margin-bottom:5%;
+  }
 
- 	.calendar footer {
- 		margin-top:5%;
- 		display: flex;
- 		justify-content: space-between;
- 	}
+  .calendar footer {
+   margin-top:5%;
+   display: flex;
+   justify-content: space-between;
+  }
 
- 	.date_grid {
- 		height:70%;
- 		display: grid;
- 		grid-row-gap: 1%;
- 		text-align:center;
- 		grid-template-columns: repeat(7, 1fr);
- 	}
+  .date_grid {
+   height:70%;
+   display: grid;
+   grid-row-gap: 1%;
+   text-align:center;
+   grid-template-columns: repeat(7, 1fr);
+  }
 
- 	.day_name {
- 		color: #999;
- 		line-height:0;
- 		margin-top:30%;
- 		margin-bottom:20%;
- 		text-decoration:underline;
- 	}
+  .day_name {
+   color: #999;
+   line-height:0;
+   margin-top:30%;
+   margin-bottom:20%;
+   text-decoration:underline;
+  }
 
- 	.month_grid {
- 		height:70%;
- 		display: grid;
- 		grid-row-gap: 1%;
- 		text-align:center;
- 		grid-template-columns: repeat(3, 1fr);
-	}
+  .month_grid {
+   height:70%;
+   display: grid;
+   grid-row-gap: 1%;
+   text-align:center;
+   grid-template-columns: repeat(3, 1fr);
+ }
 
-	.range-message {
-		font-size: 80%;
-		font-style: italic;
-	}
+ .range-message {
+  font-size: 80%;
+  font-style: italic;
+ }
 
-	button {
-	    display: inline-block;
-		background: #fff;
-	    border: none;
-	    padding: 0;
-	    margin: 0;
-	    text-decoration: none;
-	    cursor: pointer;
-	    text-align: center;
-	    transition: background 250ms ease-in-out, 
-	                transform 150ms ease;
-	    -webkit-appearance: none;
-	    -moz-appearance: none;
-	}
+ button {
+     display: inline-block;
+  background: #fff;
+     border: none;
+     padding: 0;
+     margin: 0;
+     text-decoration: none;
+     cursor: pointer;
+     text-align: center;
+     transition: background 250ms ease-in-out,
+                 transform 150ms ease;
+     -webkit-appearance: none;
+     -moz-appearance: none;
+ }
 
-	.calIcon{
-		color:#7F7F7F;
-		/*transform:translateX(-1.5em);*/
-	    transition: background 250ms ease-in-out, 
-	                transform 150ms ease;
-	    -webkit-appearance: none;
-	    -moz-appearance: none;
-	}
-	.calIcon:hover,
-	.calIcon:focus {
-	    color: #0F4C12;
-	}
+ .calIcon{
+  color:#7F7F7F;
+  /*transform:translateX(-1.5em);*/
+     transition: background 250ms ease-in-out,
+                 transform 150ms ease;
+     -webkit-appearance: none;
+     -moz-appearance: none;
+ }
+ .calIcon:hover,
+ .calIcon:focus {
+     color: #0F4C12;
+ }
 
-	.today {
-		border: 1px solid red;
-		background:red;
-		color:#fff;
-		border-radius: 50%;
-	}
+ .today {
+  border: 1px solid red;
+  background:red;
+  color:#fff;
+  border-radius: 50%;
+ }
 
-	.sunday {
-		color:#999;
-	}
+ .sunday {
+  color:#999;
+ }
 
-	button:hover,
-	button:focus {
-	    background: #eee;
-	}
+ button:hover,
+ button:focus {
+     background: #eee;
+ }
 
-	button:focus {
-	    outline: 1px solid #fff;
-	    outline-offset: -4px;
-	}
+ button:focus {
+     outline: 1px solid #fff;
+     outline-offset: -4px;
+ }
 
-	button:active {
-	    transform: scale(0.99);
-	}
+ button:active {
+     transform: scale(0.99);
+ }
 </style>
 
 <script>

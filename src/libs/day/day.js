@@ -171,7 +171,7 @@ export default class Day {
     // return Day.today().startOf(span).back(1,span).relative(span);
   }
 
-  // Subclassing DayRange.class through Day.range
+  // Subclassing DayRange.class through Day.Range
   static Range = DayRange;
 
   /*

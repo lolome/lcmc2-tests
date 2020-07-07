@@ -2,6 +2,9 @@
   <div
     class="component-b">
     Component B
+    <div class="bg-yellow-300 text-red-500">
+      This is a Taiwind test. Backgroud should be set as yellow, and text should be red.
+    </div>
   </div>
 </template>
 
