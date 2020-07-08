@@ -60,7 +60,7 @@
         (Sun:0, Mon:1, etc.) -->
         <span
           v-for="dayD in currentSelection.begin.date.getDay()"
-          :key="'blank_' + dayD.id"
+          :key="'blank_' + dayD"
           class="blank">
         </span>
         <button
@@ -148,14 +148,13 @@
 * - - - - - - - - - - - - - - - - - - - - -
 */
 
+import hookable from '../mixins/hookable';
+
 export default {
 
   name: 'DatePicker',
 
-  props: [],
-
   data () {
-    // const Day = this.$Day;
     return {
       range: new this.$Day.Range(this.$Day.today(), this.$Day.today()),
       currentSelection: this.$Day.current('MONTH'),
@@ -163,6 +162,20 @@ export default {
       rangeStatus: 0,
       display: 'none'
     };
+  },
+
+  mixins: [hookable],
+
+  mounted: function () {
+    // if an initial param has been provided, use it.
+    if (this.initial) {
+      // NOTE: falsy values in ECMA-/Javascript cover the below:
+      // null, undefined, NaN, '', 0, false
+      const newRange = this.$Day.parse(this.initial);
+      if (!newRange) { return; }
+      this.range = newRange;
+      this.currentSelection = this.range.begin.relative('MONTH');
+    }
   },
 
   computed: {

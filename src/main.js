@@ -44,7 +44,15 @@ const mountComponent = (element, componentName) => {
   // console.log('Component:', component);
   if (typeof component !== 'undefined') {
     new Vue({
-      render: h => h(component)
+      render: h => h(
+        component,
+        {
+          props: {
+            // Pass any data attribute from entry point, for data initialization
+            initial: element.getAttribute('data')
+          }
+        }
+      )
     }).$mount(element);
   } else {
     new Vue({

@@ -47,6 +47,7 @@
       <strike>The following div refers to some non-inexistent component, and should be left as is.</strike><br>
       The following div refers to some non-inexistent component, and should display an error.
     </div>
+    
     <div vue-component="Disabled">
     </div>
 
@@ -59,8 +60,12 @@
     </button>
 
     <h1>Un exemple de DatePicker</h1>
-    <div vue-component="DatePicker">
-    </div>
+    <p>Celui-ci n’est pas instancié et devrait se mettre par défaut à la date d’aujourd’hui.</p>
+    <div vue-component="DatePicker"></div>
+
+    <h2>Un autre exemple de DatePicker</h1>
+    <p>Celui-ci est instancié au mois de mai 2020.</p>
+    <div vue-component="DatePicker" data="May 2020"></div>
 
     <!-- built files will be auto injected -->
 

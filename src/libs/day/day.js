@@ -174,6 +174,14 @@ export default class Day {
   // Subclassing DayRange.class through Day.range
   static Range = DayRange;
 
+  // Delegating any parsing to DayRange generic parse class:
+  // This means that any simple date parsed will be returned as a Range,
+  // starting and ending on that same date.
+
+  static parse (str) {
+    return DayRange.parse(str);
+  }
+
   /*
    * -----------------------------------------
    *  instance methods
