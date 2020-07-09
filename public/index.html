@@ -30,7 +30,7 @@
     <div vue-component="ComponentA">
       This div will be replaced by “ComponentA”
     </div>
-
+    
     <div vue-component="ComponentB">
       This div will be replaced by “ComponentB”
     </div>
@@ -51,10 +51,31 @@
     <div vue-component="Disabled">
     </div>
 
-    <div class="text-gray-900 antialiased leading-tight">
+    <div class="text-gray-300 antialiased leading-tight">
         Testing some Tailwind styling...
     </div>
 
+    <span class="bg-red-500 w-9 text-center p-2 text-xs text-white" style="border-radius: 50%;">Br</span> Brent<br/>
+    <span class="bg-orange-600 w-9 text-center p-2 text-xs text-white" style="border-radius: 50%;">Wt</span> WTI
+    
+    <div class="p-4 bg-orange-200 inline-flex items-stretch">
+      <div class="circle">Br</div>&nbsp;Brent
+    </div>
+      
+    <style>
+      .circle {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        font-family: 'Proxima Nova';
+        font-size: 12px;
+        color: #fff;
+        line-height: 25px;
+        text-align: center;
+        background: blue
+      }
+    </style>
+    
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
       Button
     </button>
@@ -65,6 +86,7 @@
 
     <h2>Un autre exemple de DatePicker</h1>
     <p>Celui-ci est instancié au mois de mai 2020.</p>
+    
     <div vue-component="DatePicker" data="May 2020"></div>
 
     <!-- built files will be auto injected -->

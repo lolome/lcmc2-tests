@@ -1,25 +1,21 @@
 <template>
   <div
-    class="modulcol-2"
+    style="width:12rem;"
     id="when">
 
-    <span
-      class="quid">
-      Period:&nbsp;
-    </span>
-
-    <span
-      class="answer">
-      {{ rangeDesc }}
-    </span>
-
-    <label>
-      <input
-        placeholder="Enter code"
-        @change="setRangeFromText($event.target.value)">
+    <label style="display:flex; align-content:stretch;">
+      <div style="width:86%">
+        <span :style="{visibility: toggleInput ? 'hidden' : 'visible'}"
+        class="summup" @click="toggleInput=true">
+          {{ rangeDesc }}
+        </span>
+        <input v-show="toggleInput" class="crit-field"
+          placeholder="Enter code"
+          @change="setRangeFromText($event.target.value)">
+      </div>
       <button
-        @click="display = 'month'">
-        ShowMonth
+      @click="display = 'month'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M20 20h-4v-4h4v4zm-6-10h-4v4h4v-4zm6 0h-4v4h4v-4zm-12 6h-4v4h4v-4zm6 0h-4v4h4v-4zm-6-6h-4v4h4v-4zm16-8v22h-24v-22h3v1c0 1.103.897 2 2 2s2-.897 2-2v-1h10v1c0 1.103.897 2 2 2s2-.897 2-2v-1h3zm-2 6h-20v14h20v-14zm-2-7c0-.552-.447-1-1-1s-1 .448-1 1v2c0 .552.447 1 1 1s1-.448 1-1v-2zm-14 2c0 .552-.447 1-1 1s-1-.448-1-1v-2c0-.552.447-1 1-1s1 .448 1 1v2z"/></svg>
       </button>
     </label>
 
@@ -82,22 +78,22 @@
 
       <footer
         class="month">
-        <button
+        <button class="text-sm text-gray-800"
           id="today"
           :style="{
             'visibility': todayNotVisible ? 'visible' : 'hidden'
           }"
           @click="backToToday">
-          Today
+          Tdy
         </button>
         <span
           class='range-message'>
           {{ rangeSelectionMessage }}
         </span>
-        <button
+        <button class="text-sm text-gray-800"
           id="range"
           @click="toggleRange">
-          Range
+          Rge
         </button>
       </footer>
     </div>
@@ -160,7 +156,8 @@ export default {
       currentSelection: this.$Day.current('MONTH'),
       today: this.$Day.today().tag,
       rangeStatus: 0,
-      display: 'none'
+      display: 'none',
+      toggleInput: false
     };
   },
 
@@ -208,10 +205,18 @@ export default {
 
   methods: {
 
+    resetDisplay () {
+      this.display = 'none';
+      this.currentSelection = this.range.begin.relative('MONTH');
+      this.toggleInput = false;
+    },
+
     setRangeFromText (value) {
       const newRange = this.$Day.Range.parse(value);
       if (newRange == null) return;
-      this.range = newRange; this.display = 'none';
+      this.range = newRange;
+      // this.display = 'none';
+      this.resetDisplay();
     },
 
     setRangeFromDate (value) {
@@ -219,7 +224,8 @@ export default {
       switch (this.rangeStatus) {
         case 0:
           this.range = new DayRange(value, value);
-          this.display = 'none';
+          // this.display = 'none';
+          this.resetDisplay();
           break;
         case 1:
           this.range = new DayRange(value, value);
@@ -228,13 +234,14 @@ export default {
         case 2:
           this.range = new DayRange(this.range.begin, value);
           this.rangeStatus = 0;
-          this.display = 'none';
+          // this.display = 'none';
+          this.resetDisplay();
           break;
       }
     },
 
     setSelectionFromMonth (value) {
-      this.currentSelection = this.$Day.Range.parse(value + ' ' + this.currentSelection.begin.date.getFullYear());
+      this.currentSelection = this.$Day.parse(value + ' ' + this.currentSelection.begin.date.getFullYear());
       this.display = 'month';
     },
 
@@ -279,26 +286,18 @@ export default {
   .summup {
     position:absolute;
     max-width: 12.8em;
-    font-size: 28px;
+    font-size: 20px;
     display: block;
     height: 36px;
     font-weight: bold;
     color: #f5730e;
-    line-height: 40px;
-  }
-
-  .summup:hover{
-    visibility:hidden;
-  }
-
-  .crit-field:hover{
-    visibility:visible;
+    line-height: 28px;
   }
 
   .calendar {
     border:1px solid gray;
     padding: 5px;
-    max-width: 12.8em;
+    max-width: 11.8em;
     height:14em;
     box-sizing:border-box;
   }
@@ -319,7 +318,7 @@ export default {
   .date_grid {
     height:70%;
     display: grid;
-    grid-row-gap: 1%;
+    grid-row-gap: 0%;
     text-align:center;
     grid-template-columns: repeat(7, 1fr);
   }
@@ -329,11 +328,10 @@ export default {
     line-height:0;
     margin-top:30%;
     margin-bottom:20%;
-    text-decoration:underline;
+    //text-decoration:underline;
   }
 
   .month_grid {
-    height:70%;
     display: grid;
     grid-row-gap: 1%;
     text-align:center;
@@ -375,10 +373,11 @@ export default {
   }
 
   .today {
-    border: 1px solid red;
     background:red;
     color:#fff;
     border-radius: 50%;
+    margin-top:0;
+    margin-bottom:0;
   }
 
   .sunday {

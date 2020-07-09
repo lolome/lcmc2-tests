@@ -175,7 +175,7 @@ export default class Day {
   static Range = DayRange;
 
   // Delegating any parsing to DayRange generic parse class:
-  // This means that any simple date parsed will be returned as a Range,
+  // This means that any simple date parsed will be returned as a DayRange,
   // starting and ending on that same date.
 
   static parse (str) {
