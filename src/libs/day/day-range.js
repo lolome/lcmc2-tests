@@ -137,7 +137,7 @@ export default class DayRange {
   static mNumberFor (str) {
     // returns the 1th-indexed number of a month, given its name
     if (str === null || str.length < 3) return null;
-    const calRef = [null, 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'july', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    const calRef = [null, 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     return calRef.indexOf(str.substring(0, 3).toLowerCase());
   }
 
