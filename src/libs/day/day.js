@@ -2,8 +2,8 @@
  * -----------------------------------------
  *  Day Class
  * - - - - - - - - - - - - - - - - - - - - -
- *  version: 1.1
- *  date: June 2020
+ *  version: 1.2
+ *  date: July 2020
  *  authors: Hugues Leroy, Laurent Mercier
  *  licence: 'XXX'
  * - - - - - - - - - - - - - - - - - - - - -
@@ -11,13 +11,8 @@
  * - - - - - - - - - - - - - - - - - - - - -
 */
 
-import {
-  CODES,
-  NAMES
-} from './constants';
-
+import { CODES, NAMES, zeroPad } from './shared';
 import DayRange from './day-range';
-import { padStart } from '@/utils/pad';
 
 /*
  * -----------------------------------------
@@ -49,8 +44,6 @@ export default class Day {
   // or null -- the case being.
 
   constructor (arg) {
-    // this.date = new Date();
-
     if (arg instanceof Day) {
       this.date = arg.date;
     } else if (arg instanceof Date) {
@@ -63,7 +56,6 @@ export default class Day {
     } else {
       this.date = Day.newYorkDate();
     }
-
     this.update();
   }
 
@@ -72,6 +64,7 @@ export default class Day {
    *  static methods
    * - - - - - - - - - - - - - - - - - - - - -
    */
+
   static newYorkDate () {
     // Returns time in NYC.
     // As for now, we don't want to deal with a full-fledged js library
@@ -122,7 +115,7 @@ export default class Day {
   static buildFrom (year, month, day) {
     // Used internally, esp. by parsing methods in DayRange.
     // Makes sure of correct handling of leading zeroes.
-    return new Day(`${padStart(year)}-${padStart(month)}-${padStart(day)}`);
+    return new Day(`${zeroPad(year)}-${zeroPad(month)}-${zeroPad(day)}`);
   }
 
   // DELEGATIONS:
@@ -266,7 +259,7 @@ export default class Day {
 
       .replace(/%-m/g, this.tagMonth()
         .toString())
-      .replace(/%m/g, padStart(this.tagMonth())) // n1th
+      .replace(/%m/g, zeroPad(this.tagMonth())) // n1th
       .replace(/%\^B/g, monthNames[this.tagMonth() - 1]
         .toUpperCase()) // n0th
       .replace(/%B/g, monthNames[this.tagMonth() - 1]) // n0th
@@ -277,7 +270,7 @@ export default class Day {
 
       .replace(/%-d/g, this.tagDay()
         .toString())
-      .replace(/%d/g, padStart(this.tagDay()))
+      .replace(/%d/g, zeroPad(this.tagDay()))
       .replace(/%\^A/g, dayNames[this.date.getDay()]
         .toUpperCase())
       .replace(/%A/g, dayNames[this.date.getDay()])
