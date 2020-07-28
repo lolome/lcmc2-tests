@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "vue-cli-service serve --open"
+    "start": "vue-cli-service serve --open",
+    "test": "jest"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -26,6 +27,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
     "html-loader": "^1.1.0",
+    "jest": "^26.1.0",
     "vue-template-compiler": "^2.6.11"
   },
   "babel": {

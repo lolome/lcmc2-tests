@@ -42,7 +42,8 @@ const NAMES = {
 const CODES = {
   MONTH: ['F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z'],
   QUARTER: ['Q1', 'Q2', 'Q3', 'Q4'],
-  SEMESTER: ['1H', '2H']
+  SEMESTER: ['1H', '2H'],
+  YEAR: ['Cal']
 };
 
 // SHARED UTILS

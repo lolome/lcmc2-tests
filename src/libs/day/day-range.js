@@ -16,41 +16,40 @@ import Day from './day';
 
 /*
  * -----------------------------------------
- *  constants
- * - - - - - - - - - - - - - - - - - - - - -
- */
-
-// Regex string for detecting any month
-// "(jan[uary]*|feb[ruary]*|mar[ch]*|apr[il]*|may|...)"
-const mPattern = '(' + NAMES.MONTH.map(
-  e => e.toLowerCase().substr(0, 3) +
-  (e.length === 3 ? '' : '[' + e.substr(3, 10) + ']*')
-).join('|') + ')';
-
-// Regex string for detecting any month by code
-const cPattern = `([${CODES.MONTH.join()}])`;
-
-// Month reference, nth-1 indexed
-const MonthNth1 = [null].concat(NAMES.MONTH.map(e => e.toLowerCase().substr(0, 3)));
-// Month codes reference, nth-1 indexed
-const CodeNth1 = [null].concat(CODES.MONTH);
-
-/*
- * -----------------------------------------
  *  export Class
  * - - - - - - - - - - - - - - - - - - - - -
  */
 export default class DayRange {
   // Usage:
-  // direct construct takes 2 arguments:
-  // either 2 Day.tag() string, or 2 Day instances.
-  // new DayRange('2018-12-01','2018-12-10').tag === new DayRange(new Day('2018-12-01'), new Day('2018-12-10')).tag
-  // For anything more complex, we use DayRange.parse()
+  // Direct construct takes 3 arguments types:
+  //  1. Day tags as strings, 'YYYY-MM-DD' format,
+  //  2. DayRange tags as strings, 'YYYY-MM-DD, YYYY-MM-DD' format,
+  //  3. Day() instances.
+  // 1 arg given will generate a one-day range. No args given will default to the current month.
+  // For anything more complex, we'll resort to DayRange::parse()
   constructor (...args) {
-    const input = (args.length !== 2)
-      ? [new Day().startOf('MONTH'), new Day().endOf('MONTH')]
-      : [new Day(args[0]), new Day(args[1])];
-    this.begin = input[0]; this.end = input[1];
+    switch (args.length) {
+      case 2:
+        this.begin = new Day(args[0]);
+        this.end = new Day(args[1]);
+        break;
+      case 1:
+        if (args[0] instanceof String && args[0].match(/^(\d{4})-(\d{2})-(\d{2}), (\d{4})-(\d{2})-(\d{2})$/i)) {
+          // If we're given a range tag, 'YYYY-MM-DD, YYYY-MM-DD', then use it.
+          const range = args[0].split(', ');
+          this.begin = new Day(range[0]);
+          this.end = new Day(range[1]);
+        } else {
+          // Otherwise, treat the argument as a one-day range specification.
+          this.begin = new Day(args[0]);
+          this.end = new Day(args[0]);
+        }
+        break;
+      default:
+        this.begin = new Day().startOf('MONTH');
+        this.end = new Day().endOf('MONTH');
+        break;
+    }
     this.update();
   }
 
@@ -59,6 +58,71 @@ export default class DayRange {
    *  static methods
    * - - - - - - - - - - - - - - - - - - - - -
    */
+
+  static get mPattern () {
+    // Regex string for detecting any month
+    // "(jan[uary]*|feb[ruary]*|mar[ch]*|apr[il]*|may|...)"
+    const pattern = '(' + NAMES.MONTH.map(
+      e => e.toLowerCase().substr(0, 3) +
+      (e.length === 3 ? '' : '[' + e.substr(3, 10) + ']*')
+    ).join('|') + ')';
+    return pattern;
+  }
+
+  static get cPattern () {
+    // Regex string for detecting any month by code
+    return `([${CODES.MONTH.join('')}])`;
+  }
+
+  static get fPattern () {
+    // Regex string for full range codes (month, quarter, semester, year)
+    // Note that 'Q' is used in month codes (Q21), and quarter codes (Q121) alike.
+    // The same goes for 'H' in month codes, and semester codes.
+    // For that reason, the latter must have precedence over month codes, to prevent wrong detections.
+    return `(${CODES.YEAR[0]}|${CODES.SEMESTER.join('|')}|${CODES.QUARTER.join('|')}|[${CODES.MONTH.join('')}])`;
+  }
+
+  static get MonthNth1List () {
+    // Short month list, nth-1 indexed
+    return [null].concat(NAMES.MONTH.map(e => e.toLowerCase().substr(0, 3)));
+  }
+
+  static get CodeNth1List () {
+    // Month Code list, nth-1 indexed
+    return [null].concat(CODES.MONTH);
+  }
+
+  static mNumberFor (str) {
+    // returns the 1th-indexed number of a month, given its name
+    if (str === null || str.length < 3) return null;
+    const nb = this.MonthNth1List.indexOf(str.substring(0, 3).toLowerCase());
+    if (nb === -1) { return null; }
+    return nb;
+  }
+
+  static cNumberFor (str) {
+    // returns the 1th-indexed number of a month, given its code
+    if (str === null || str.length > 1) return null;
+    const nb = this.CodeNth1List.indexOf(str);
+    if (nb === -1) { return null; }
+    return nb;
+  }
+
+  static yearForDigits (digits) {
+    // Brokers often indicate the year as one-digit in their range codes,
+    // such as F3 for F23. This method interpolates the current decenny,
+    // returning the full year.
+    digits = String(digits);
+    switch (digits.length) {
+      case 1:
+        return Day.today().strftime('%Y').slice(0, 3) + String(digits);
+      case 2:
+        return Day.today().strftime('%Y').slice(0, 2) + String(digits);
+      default:
+        return null;
+    }
+  }
+
   static parse (str) {
     // Should parse any Date Range format the brokers use,
     // and any format used in the interface.
@@ -78,12 +142,20 @@ export default class DayRange {
   }
 
   static parseTag (str) {
+    // We allow recognize two tag formats.
+    // 1. For a single day: '2020-01-01'.
+    // 2. As actual range: '2020-01-01, 2020-04-25'.
+    // A one-day tag will generate a DayRange with a range tag as thus: '2020-01-01, 2020-01-01'.
+    // Tag parsing is strict: one space is mandatory within range tags.
+    // Any incorrect format will return null.
     if (str.match(/(\d{4})-(\d{2})-(\d{2}), (\d{4})-(\d{2})-(\d{2})/i)) {
       return new DayRange(...str.split(', '));
     }
     // if one single Day has been provided
-    if (str.match(/(\d{4})-(\d{2})-(\d{2})/i)) {
-      return new DayRange(str, str);
+    // (Note the ^ $ selectors that impeach partial detection within an incorrectly
+    // formatted range tag).
+    if (str.match(/^(\d{4})-(\d{2})-(\d{2})$/i)) {
+      return new DayRange(str);
     }
     // Default
     return null;
@@ -95,13 +167,13 @@ export default class DayRange {
 
     const lstr = str.toLowerCase().trim();
     if (lstr === 'today') {
-      return new DayRange(Day.today(), Day.today());
+      return new DayRange(Day.today());
     }
     if (lstr === 'tomorrow') {
-      return new DayRange(Day.tomorrow(), Day.tomorrow());
+      return new DayRange(Day.tomorrow());
     }
     if (lstr === 'yesterday') {
-      return new DayRange(Day.yesterday(), Day.yesterday());
+      return new DayRange(Day.yesterday());
     }
 
     const m = lstr.match(/(this|last) (year|semester|quarter|month|week|commercial week)/i);
@@ -128,25 +200,15 @@ export default class DayRange {
     return null;
   }
 
-  static mNumberFor (str) {
-    // returns the 1th-indexed number of a month, given its name
-    if (str === null || str.length < 3) return null;
-    return MonthNth1.indexOf(str.substring(0, 3).toLowerCase());
-  }
-
-  static cNumberFor (str) {
-    // returns the 1th-indexed number of a month, given its code
-    if (str === null || str.length > 1) return null;
-    return CodeNth1.indexOf(str);
-  }
-
   static parseArbitrary (str) {
     // Parse arbitrary ranges, given in the DayRange::toCode() format
     // We leverage the rather lengthy Regex for parsing monthes names.
     // Also, note that backlashes have to be ESCAPED within all String templates.
 
+    const mPattern = this.mPattern;
+
     // 1. Same year, same month: "May 21-27, 2018"
-    let m = str.match(new RegExp(`${mPattern} (\\d{1,2})-(\\d{1,2}),? (\\d{4})`, 'i'));
+    let m = str.match(new RegExp(`${mPattern}\\s?(\\d{1,2})-(\\d{1,2}),?\\s(\\d{4})`, 'i'));
     if (m !== null) {
       const mthIx = this.mNumberFor(m[1]);
       const yrStr = m[4];
@@ -157,7 +219,7 @@ export default class DayRange {
     }
 
     // 2. Same year, different month: "May 28-Jun 03, 2018"
-    m = str.match(new RegExp(`${mPattern} (\\d{1,2})-${mPattern} (\\d{1,2}),? (\\d{4})`, 'i'));
+    m = str.match(new RegExp(`${mPattern}\\s?(\\d{1,2})\\W*${mPattern}\\s?(\\d{1,2}),?\\s(\\d{4})`, 'i'));
     if (m !== null) {
       const mthIx1 = this.mNumberFor(m[1]);
       const mthIx2 = this.mNumberFor(m[3]);
@@ -169,7 +231,7 @@ export default class DayRange {
     }
 
     // 3. Different years: "Dec 31, 2018-Jan 06, 2019"
-    m = str.match(new RegExp(`${mPattern} (\\d{1,2}),? (\\d{4})-${mPattern} (\\d{1,2}),? (\\d{4})`, 'i'));
+    m = str.match(new RegExp(`${mPattern}\\s?(\\d{1,2}),?\\s(\\d{4})\\W*${mPattern}\\s?(\\d{1,2}),?\\s(\\d{4})`, 'i'));
     if (m !== null) {
       const mthIx1 = this.mNumberFor(m[1]);
       const mthIx2 = this.mNumberFor(m[4]);
@@ -182,19 +244,25 @@ export default class DayRange {
     }
 
     // 4. Plain day: "Jan 06, 2019"
-    m = str.match(new RegExp(`${mPattern} (\\d{1,2}),? (\\d{4})`, 'i'));
+    m = str.match(new RegExp(`${mPattern}\\s?(\\d{1,2}),?\\s(\\d{4})`, 'i'));
     if (m !== null) {
       const mthIx = this.mNumberFor(m[1]);
       const yrStr = m[3];
-      return new DayRange(
-        Day.buildFrom(yrStr, mthIx, m[2]),
-        Day.buildFrom(yrStr, mthIx, m[2])
-      );
+      return new DayRange(Day.buildFrom(yrStr, mthIx, m[2]));
     }
 
     // 5. Interpolate the current year.
-    // 5.1 "May 21-27"
-    m = str.match(new RegExp(`${mPattern} (\\d{1,2})-(\\d{1,2})`, 'i'));
+
+    // 5.1 "May 21"
+    m = str.match(new RegExp(`^${mPattern}\\s?(\\d{1,2})$`, 'i'));
+    if (m !== null) {
+      const mthIx = this.mNumberFor(m[1]);
+      const yrStr = Day.today().date.getFullYear();
+      return new DayRange(Day.buildFrom(yrStr, mthIx, m[2]));
+    }
+
+    // 5.2 "May 21-27"
+    m = str.match(new RegExp(`^${mPattern}\\s?(\\d{1,2})\\W+(\\d{1,2})$`, 'i'));
     if (m !== null) {
       const mthIx = this.mNumberFor(m[1]);
       const yrStr = Day.today().date.getFullYear();
@@ -204,8 +272,8 @@ export default class DayRange {
       );
     }
 
-    // 5.2 "May 28-Jun 03"
-    m = str.match(new RegExp(`${mPattern} (\\d{1,2})-${mPattern} (\\d{1,2})`, 'i'));
+    // 5.3 "May 28-Jun 03"
+    m = str.match(new RegExp(`${mPattern}\\s?(\\d{1,2})\\W*${mPattern}\\s?(\\d{1,2})`, 'i'));
     if (m !== null) {
       const mthIx1 = this.mNumberFor(m[1]);
       const mthIx2 = this.mNumberFor(m[3]);
@@ -215,16 +283,19 @@ export default class DayRange {
         Day.buildFrom(yrStr, mthIx2, m[4])
       );
     }
+    // Default option
     return null;
   }
 
   static parseCompoundCode (str) {
     // parse any range defined by TWO codes, such as 'Z18-F19'
-    const m = str.match(/(\w+\d\d)\W(\w+\d\d)/i);
+    // Here we enforce years as two-digits, to mitigate false detections.
+    const pattern = this.fPattern;
+    const m = str.match(new RegExp(`${pattern}(\\d\\d)\\W*${pattern}(\\d\\d)`));
     if (m === null) return null;
-    const compoundA = DayRange.parseCode(m[1]);
+    const compoundA = this.parseCode([m[1], m[2]].join(''));
     if (compoundA === null) return null;
-    const compoundB = DayRange.parseCode(m[2]);
+    const compoundB = this.parseCode([m[3], m[4]].join(''));
     if (compoundB === null) return null;
     return new DayRange(compoundA.begin, compoundB.end);
   }
@@ -248,7 +319,7 @@ export default class DayRange {
         return new DayRange(`20${m[2]}-01-01`, `20${m[2]}-06-30`);
       }
       // otherwise
-      return new DayRange(`20${m[2]}-01-01`, `20${m[2]}-06-30`);
+      return new DayRange(`20${m[2]}-07-01`, `20${m[2]}-12-31`);
     }
 
     // Quarterly computs
@@ -266,37 +337,28 @@ export default class DayRange {
       return new DayRange(d, d.endOf('QUARTER'));
     }
 
-    // LME calculations (to be seen: do we need them?)
-
     // Monthly computs
-    // m = str.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\W?(\d\d)?$/i);
+    const mPattern = this.mPattern;
+    const cPattern = this.cPattern;
+
+    // First, parse by month name
     m = str.match(new RegExp(`${mPattern}\\W?(\\d\\d)?$`, 'i'));
     if (m !== null) {
       // set to current year if no year given
       const year = m[2] || Day.today().strftime('%y');
-      // const cal = [null, 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-      // const mthIx = cal.indexOf(m[1].toLowerCase());
       const mthIx = this.mNumberFor(m[1]);
       const d = new Day(`20${year}-${zeroPad(mthIx)}-01`);
       return new DayRange(d, d.endOf('MONTH'));
     }
 
     // Now, process with code strings
-    // Do not allow spaces between letter and year, it screws up everything
-    // str = str(/\s+/, '');
 
     // Special case: things like "JV13" or "JV3"
     // m = str.match(/([FGHJKMNQUVXZ])([FGHJKMNQUVXZ])(\d{1,2})/i);
     m = str.match(new RegExp(`${cPattern}${cPattern}(\\d{1,2})`, 'i'));
     if (m !== null) {
-      // If broker has given one digit only for the year,
-      // interpolate the current decenny
-      const yr = new Day().strftime('%Y');
-      const century = yr.slice(0, 2);
-      const decenny = yr.slice(2);
-      const yrStr = m[3].length === 1
-        ? century + decenny[0] + m[3]
-        : century + m[3];
+      // Interpolate the current decenny
+      const yrStr = this.yearForDigits(m[3]);
       // Now, compute interval
       const mthIx1 = this.cNumberFor(m[1]);
       const mthIx2 = this.cNumberFor(m[2]);
@@ -307,24 +369,17 @@ export default class DayRange {
     }
 
     // Regular case: things like "Z13" or "Z3"
-    m = str.match(/([FGHJKMNQUVXZ])(\d{1,2})/i);
+    m = str.match(new RegExp(`${cPattern}(\\d{1,2})`, 'i'));
     if (m !== null) {
-      // If broker has given one digit only for the year, interpolate the current decenny
-      const yr = new Day().strftime('%Y');
-      const century = yr.slice(0, 2);
-      const decenny = yr.slice(2);
-      const yrStr = m[2].length === 1
-        ? century + decenny[0] + m[2]
-        : century + m[2];
+      // Interpolate the current decenny
+      const yrStr = this.yearForDigits(m[2]);
       // Now, compute interval
-      const cal = [null, 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z'];
-      const mthIx = cal.indexOf(m[1].toUpperCase());
+      const mthIx = this.cNumberFor(m[1]);
       const d = new Day(`${yrStr}-${zeroPad(mthIx)}-01`);
       return new DayRange(d, d.endOf('MONTH'));
     }
 
     // Default
-    console.log('parse failed', str);
     return null;
   }
 
@@ -405,7 +460,7 @@ export default class DayRange {
    */
 
   update () {
-    // Do NOT allow ant range start to be AFTER the range end
+    // Do NOT allow range start to be AFTER the range end
     if (this.begin.tag > this.end.tag) {
       // In that case, switch terms
       [this.begin, this.end] = [this.end, this.begin];
@@ -503,12 +558,12 @@ export default class DayRange {
 
   findNthDay (dayName, n) {
     // returns the 1-nth day by Code name within period
-    // ie: 2nd Wednesday would be: range.findNth('Wed', 2)
+    // ie: 2nd Wednesday would be: range.findNth('Wednesday', 2)
     if (n < 1) {
-      console.error('Incorrect index: findNth() is 1-nth');
-      // TODO: throw 'Incorrect index: findNth() is 1-nth';
+      console.log('Incorrect index: findNth() is 1-nth');
+      return null;
     }
-    return this.findAllDays(dayName)[n - 1];
+    return (this.findAllDays(dayName)[n - 1] || null);
   }
 
   toHumanName () {

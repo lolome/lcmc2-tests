@@ -49,13 +49,14 @@ export default class Day {
     } else if (arg instanceof Date) {
       this.date = arg;
     } else if (typeof arg === 'string') {
-      const m = arg.match(/(\d{4})-(\d{2})-(\d{2})/i);
-      if (m !== null) {
-        this.date = new Date(parseInt(m[1]), parseInt(m[2] - 1), parseInt(m[3]));
-      }
+      const parsedDate = new Date(arg);
+      // can js Date read it? Then use it, otherwise default to newYorkDate
+      this.date = isNaN(parsedDate.getTime()) ? Day.newYorkDate() : parsedDate;
     } else {
+      // Default option
       this.date = Day.newYorkDate();
     }
+    // Always update our constructed date, to discard any timezone settings.
     this.update();
   }
 
@@ -175,6 +176,22 @@ export default class Day {
     return DayRange.parse(str);
   }
 
+  static skipMth (jsDate, n = 1) {
+    // When skipping forward or backwards at month scale,
+    // we want to compensate for Date.setMonth() rolling the date into the following month,
+    // in case the target does not exist (as in: Jan 31 + 1mth => March 2).
+
+    // First, infer the absolute mth number we're aiming for, through positive modulo,
+    // so Month 1 (Feb) back 3 mths return Month 10 (November).
+    const monthNb = ((jsDate.getMonth() + n) % 12 + 12) % 12;
+    // Then, roll the date back or forward.
+    jsDate.setMonth(jsDate.getMonth() + n);
+    // Did we miss our monthNb target? Then adjust.
+    while (jsDate.getMonth() !== monthNb) {
+      jsDate.setDate(jsDate.getDate() - 1);
+    }
+  }
+
   /*
    * -----------------------------------------
    *  instance methods
@@ -255,7 +272,7 @@ export default class Day {
       .replace(/%q/g, this.getCodeOfRelative('QUARTER'))
 
       .replace(/%F/g, this.getCodeOfRelative('MONTH', '+Year'))
-      .replace(/%s/g, this.getCodeOfRelative('MONTH'))
+      .replace(/%f/g, this.getCodeOfRelative('MONTH'))
 
       .replace(/%-m/g, this.tagMonth()
         .toString())
@@ -310,23 +327,27 @@ export default class Day {
           absoluteDate.setDate(absoluteDate.getDate() + n);
           break;
         case 'WEEK':
+        case 'COMMERCIAL_WEEK': // fall-through
           absoluteDate.setDate(absoluteDate.getDate() + n * 7);
           break;
         case 'MONTH':
-          absoluteDate.setMonth(absoluteDate.getMonth() + n);
+          // absoluteDate.setMonth(absoluteDate.getMonth() + n);
+          Day.skipMth(absoluteDate, n);
           break;
         case 'QUARTER':
-          absoluteDate.setMonth(absoluteDate.getMonth() + n * 3);
+          // absoluteDate.setMonth(absoluteDate.getMonth() + n * 3);
+          Day.skipMth(absoluteDate, n * 3);
           break;
         case 'SEMESTER':
-          absoluteDate.setMonth(absoluteDate.getMonth() + n * 6);
+          // absoluteDate.setMonth(absoluteDate.getMonth() + n * 6);
+          Day.skipMth(absoluteDate, n * 6);
           break;
         case 'YEAR':
-          absoluteDate.setMonth(absoluteDate.getMonth() + n * 12);
+          // absoluteDate.setMonth(absoluteDate.getMonth() + n * 12);
+          Day.skipMth(absoluteDate, n * 12);
           break;
       }
     }
-
     return new Day(absoluteDate);
   }
 
